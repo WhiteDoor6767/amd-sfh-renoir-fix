@@ -1,0 +1,48 @@
+From: Your Name <your.email@example.com>
+Date: Sat, 14 Nov 2026 02:40:01 +0000
+Subject: [PATCH 2/4] HID: amd_sfh: Route HID reports using node_type in work handler
+
+In amd_sfh_work(), incoming report requests are processed asynchronously.
+The work handler previously passed cli_data->report_type[current_index] to
+hid_input_report(). However, cli_data->report_type is uninitialized (0,
+corresponding to HID_INPUT_REPORT).
+
+When hid-sensor-hub requested a feature report (HID_FEATURE_REPORT, size 15),
+it was mistakenly fed into hid_input_report() as HID_INPUT_REPORT. Because
+the accelerometer input report specifies 15 bytes of payload (plus 1 byte
+report ID), the HID core found only 14 bytes of payload in the feature
+report, emitted "Event data for report 1 was too short (15 vs 14)", and
+rejected the packet with -EINVAL, effectively dropping all motion reports.
+
+Pass the actual node_type from the request node to hid_input_report() so
+feature and input reports are dispatched with their correct report types.
+
+Signed-off-by: Your Name <your.email@example.com>
+---
+ drivers/hid/amd-sfh-hid/amd_sfh_client.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_client.c b/drivers/hid/amd-sfh-hid/amd_sfh_client.c
+index 1234567..89abcdef 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_client.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_client.c
+@@ -95,7 +95,7 @@ void amd_sfh_work(struct work_struct *work)
+ 						    cli_data->feature_report[current_index]);
+ 		if (report_size)
+ 			hid_input_report(cli_data->hid_sensor_hubs[current_index],
+-					 cli_data->report_type[current_index],
++					 node_type,
+ 					 cli_data->feature_report[current_index], report_size, 0);
+ 		else
+ 			pr_err("AMDSFH: Invalid report size\n");
+@@ -104,7 +104,7 @@ void amd_sfh_work(struct work_struct *work)
+ 		report_size = mp2_ops->get_in_rep(current_index, sensor_index, report_id, in_data);
+ 		if (report_size)
+ 			hid_input_report(cli_data->hid_sensor_hubs[current_index],
+-					 cli_data->report_type[current_index],
++					 node_type,
+ 					 in_data->input_report[current_index], report_size, 0);
+ 		else
+ 			pr_err("AMDSFH: Invalid report size\n");
+-- 
+2.48.1

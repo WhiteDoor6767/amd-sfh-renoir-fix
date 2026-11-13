@@ -1,0 +1,27 @@
+From: Your Name <your.email@example.com>
+Date: Sat, 14 Nov 2026 02:40:02 +0000
+Subject: [PATCH 3/4] HID: amd_sfh: Enable interrupts by default for Renoir hardware
+
+Renoir MP2 firmware requires interrupts enabled to signal command
+completion and sensor status. When intr_disable is set to true,
+commands sent to the firmware time out with wait_response errors.
+
+Default intr_disable to false matching Bugzilla #218104.
+
+Signed-off-by: Your Name <your.email@example.com>
+---
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+index 1234567..89abcdef 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+@@ -23,7 +23,7 @@
+ 
+-static bool intr_disable = true;
++static bool intr_disable = false;
+ module_param(intr_disable, bool, 0644);
+ MODULE_PARM_DESC(intr_disable, "disable interrupt");
+-- 
+2.48.1

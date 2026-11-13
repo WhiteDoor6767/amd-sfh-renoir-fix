@@ -1,0 +1,12 @@
+[Unit]
+Description=Hyprland Accelerometer Auto Rotate Daemon
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/.config/hypr/scripts/auto_rotate.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

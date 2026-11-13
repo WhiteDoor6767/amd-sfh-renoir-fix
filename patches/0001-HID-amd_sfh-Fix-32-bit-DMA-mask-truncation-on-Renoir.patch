@@ -1,0 +1,33 @@
+From: Your Name <your.email@example.com>
+Date: Sat, 14 Nov 2026 02:40:00 +0000
+Subject: [PATCH 1/4] HID: amd_sfh: Fix 32-bit DMA mask truncation on Renoir MP2
+
+AMD Renoir MP2 Sensor Fusion Hub uses a 32-bit DMA engine. In upstream
+kernels, calling dma_set_mask_and_coherent() with DMA_BIT_MASK(64)
+resulted in allocations above 4GB (e.g. 0x110ff9000). The Renoir MP2
+hardware silently truncated the upper 32 bits and performed DMA to
+0x10ff9000, corrupting active user/kernel memory and causing MCE
+hardware memory corruption faults and bad swap offset panics.
+
+Restricting the DMA mask to DMA_BIT_MASK(32) ensures all DMA allocations
+remain in the 32-bit physical address space, restoring stability.
+
+Signed-off-by: Your Name <your.email@example.com>
+---
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+index 1234567..89abcdef 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+@@ -298,7 +298,7 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *
+ 	pci_set_master(pdev);
+ 
+-	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (rc) {
+ 		dev_err(&pdev->dev, "failed to set DMA mask\n");
+ 		return rc;
+-- 
+2.48.1

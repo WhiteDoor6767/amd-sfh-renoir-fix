@@ -1,0 +1,31 @@
+From: Your Name <your.email@example.com>
+Date: Sat, 14 Nov 2026 02:40:03 +0000
+Subject: [PATCH 4/4] HID: amd_sfh: Add DMI quirk for Dell Inspiron 7405 2-in-1
+
+Add DMI matching for Dell Inspiron 7405 2n1 convertible laptop
+to ensure the MP2 sensor fusion hub is properly detected and initialized.
+
+Signed-off-by: Your Name <your.email@example.com>
+---
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+index 1234567..89abcdef 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+@@ -48,6 +48,13 @@ static const struct dmi_system_id dmi_nodev_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "HP ENVY x360 Convertible 15-ee0xxx"),
+ 		},
+ 	},
++	{
++		.ident = "Dell Inspiron 7405 2n1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 7405 2n1"),
++		},
++	},
+ 	{ }
+ };
+-- 
+2.48.1
