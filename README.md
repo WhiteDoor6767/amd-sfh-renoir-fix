@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 The Problem
+##  The Problem
 
 For years, Linux users on AMD Ryzen 4000 Renoir 2-in-1 laptops (Dell Inspiron 7405 2-in-1, HP Envy x360, Lenovo Yoga 6) found that tablet mode and screen auto-rotation were completely non-functional. 
 
@@ -20,7 +20,7 @@ This repository provides:
 
 ---
 
-## 💻 Tested Hardware
+##  Tested Hardware
 - **Device:** Dell Inspiron 7405 2-in-1 (AMD Ryzen 4500U / 4700U Renoir)
 - **OS:** Arch Linux (Kernel 7.2.x / 6.x)
 - **Compositor:** Hyprland (0.56.x with Lua configuration)
@@ -30,7 +30,7 @@ This repository provides:
 
 ---
 
-## 🚀 Quick Install (1-Line Setup)
+##  Quick Install (1-Line Setup)
 
 Clone the repository and run the installer:
 
@@ -49,7 +49,7 @@ The script will:
 
 ---
 
-## 🔄 Hyprland Integration
+##  Hyprland Integration
 
 If using Hyprland with Lua (`hyprland.lua`), ensure `~/.config/hypr/custom/execs.lua` starts the service:
 
@@ -71,7 +71,7 @@ hl.config({
 
 ---
 
-## 🔍 Verification
+##  Verification
 
 1. **Verify DKMS status:**
    ```bash
@@ -92,7 +92,7 @@ hl.config({
 
 ---
 
-## 📬 Upstream Kernel Submission
+##  Upstream Kernel Submission
 
 The `patches/` directory contains clean, atomic patches formatted for submission to the Linux Kernel Mailing List (`linux-input@vger.kernel.org`):
 - `0001-HID-amd_sfh-Fix-32-bit-DMA-mask-truncation-on-Renoir.patch`
